@@ -1,3 +1,5 @@
+name: Publish release notes to discord
+
 on:
   release:
     types: [published]

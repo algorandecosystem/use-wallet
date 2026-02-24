@@ -1,8 +1,8 @@
 {
-  "name": "@txnlab/use-wallet",
-  "version": "4.6.0",
+  "name": "@algorandecosystem/use-wallet",
+  "version": "4.7.0-beta.0",
   "description": "TypeScript library for integrating Algorand wallets into decentralized applications",
-  "author": "Doug Richar <drichar@gmail.com>",
+  "author": "Algorand Ecosystem <contact@algorand.eco>",
   "license": "MIT",
   "repository": {
     "type": "git",
