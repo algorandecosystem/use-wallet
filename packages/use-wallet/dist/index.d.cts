@@ -93,6 +93,8 @@ declare abstract class BaseWallet {
     transactionSigner: (txnGroup: algosdk.Transaction[], indexesToSign: number[]) => Promise<Uint8Array[]>;
     canSignData: boolean;
     signData: (_data: string, _metadata: SignMetadata) => Promise<SignDataResponse>;
+    canUsePrivateKey: boolean;
+    withPrivateKey: <T>(_callback: (secretKey: Uint8Array) => Promise<T>) => Promise<T>;
     get name(): string;
     get accounts(): WalletAccount[];
     get addresses(): string[];
@@ -450,6 +452,28 @@ declare class MnemonicWallet extends BaseWallet {
     resumeSession: () => Promise<void>;
     private processTxns;
     private processEncodedTxns;
+    canUsePrivateKey: boolean;
+    /**
+     * Provide scoped access to the private key via a callback.
+     *
+     * The callback receives a copy of the 64-byte Algorand secret key.
+     * The copy is guaranteed to be zeroed from memory when the callback
+     * completes, whether it succeeds or throws.
+     *
+     * **Note:** This method is blocked on MainNet. The Mnemonic wallet is intended
+     * for development and testing only. For production use, see Web3Auth which
+     * supports `withPrivateKey` on all networks.
+     *
+     * @example
+     * ```typescript
+     * const result = await wallet.withPrivateKey(async (secretKey) => {
+     *   // secretKey is a 64-byte Uint8Array
+     *   return doSomethingWith(secretKey)
+     * })
+     * // secretKey is zeroed at this point
+     * ```
+     */
+    withPrivateKey: <T>(callback: (secretKey: Uint8Array) => Promise<T>) => Promise<T>;
     signTransactions: <T extends algosdk.Transaction[] | Uint8Array[]>(txnGroup: T | T[], indexesToSign?: number[]) => Promise<(Uint8Array | null)[]>;
 }
 
@@ -760,6 +784,27 @@ declare class Web3AuthWallet extends BaseWallet {
      * Process encoded transactions for signing
      */
     private processEncodedTxns;
+    canUsePrivateKey: boolean;
+    /**
+     * Provide scoped access to the private key via a callback.
+     *
+     * The callback receives a 64-byte Algorand secret key (ed25519 seed + public key).
+     * The key is a fresh copy that is guaranteed to be zeroed from memory when the
+     * callback completes, whether it succeeds or throws.
+     *
+     * SECURITY: The key is fetched fresh from Web3Auth for each call and never cached.
+     *
+     * @example
+     * ```typescript
+     * const result = await wallet.withPrivateKey(async (secretKey) => {
+     *   // secretKey is a 64-byte Uint8Array
+     *   // Use for custom signing, authentication, etc.
+     *   return doSomethingWith(secretKey)
+     * })
+     * // secretKey is zeroed at this point
+     * ```
+     */
+    withPrivateKey: <T>(callback: (secretKey: Uint8Array) => Promise<T>) => Promise<T>;
     /**
      * Sign transactions
      *

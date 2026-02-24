@@ -1,6 +1,6 @@
-import * as _txnlab_use_wallet from '@txnlab/use-wallet';
-import { WalletManagerConfig, WalletId, WalletKey, WalletMetadata, WalletAccount, SignMetadata, SignDataResponse, AlgodConfig } from '@txnlab/use-wallet';
-export * from '@txnlab/use-wallet';
+import * as _algorandecosystem_use_wallet from '@algorandecosystem/use-wallet';
+import { WalletManagerConfig, WalletId, WalletKey, WalletMetadata, WalletAccount, SignMetadata, SignDataResponse, AlgodConfig } from '@algorandecosystem/use-wallet';
+export * from '@algorandecosystem/use-wallet';
 import * as vue from 'vue';
 import algosdk from 'algosdk';
 
@@ -22,6 +22,7 @@ interface Wallet {
     setActive: () => void;
     setActiveAccount: (address: string) => void;
     canSignData: boolean;
+    canUsePrivateKey: boolean;
 }
 declare function useWallet(): {
     wallets: vue.ComputedRef<Wallet[]>;
@@ -33,14 +34,15 @@ declare function useWallet(): {
     activeAccount: vue.ComputedRef<WalletAccount | null>;
     activeAddress: vue.ComputedRef<string | null>;
     signData: (data: string, metadata: SignMetadata) => Promise<SignDataResponse>;
+    withPrivateKey: <T>(callback: (secretKey: Uint8Array) => Promise<T>) => Promise<T>;
     signTransactions: <T extends algosdk.Transaction[] | Uint8Array[]>(txnGroup: T | T[], indexesToSign?: number[]) => Promise<(Uint8Array | null)[]>;
     transactionSigner: (txnGroup: algosdk.Transaction[], indexesToSign: number[]) => Promise<Uint8Array[]>;
 };
 
 declare function useNetwork(): {
     activeNetwork: Readonly<vue.Ref<string, string>>;
-    networkConfig: Record<string, _txnlab_use_wallet.NetworkConfig>;
-    activeNetworkConfig: vue.ComputedRef<_txnlab_use_wallet.NetworkConfig>;
+    networkConfig: Record<string, _algorandecosystem_use_wallet.NetworkConfig>;
+    activeNetworkConfig: vue.ComputedRef<_algorandecosystem_use_wallet.NetworkConfig>;
     setActiveNetwork: (networkId: string) => Promise<void>;
     updateAlgodConfig: (networkId: string, config: Partial<AlgodConfig>) => void;
     resetNetworkConfig: (networkId: string) => void;

@@ -9,9 +9,9 @@ import type {
   WalletKey,
   WalletManager,
   WalletState
-} from '@txnlab/use-wallet'
+} from '@algorandecosystem/use-wallet'
 
-export * from '@txnlab/use-wallet'
+export * from '@algorandecosystem/use-wallet'
 
 interface WalletProviderProps {
   manager: WalletManager

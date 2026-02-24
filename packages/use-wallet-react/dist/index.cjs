@@ -39,7 +39,7 @@ module.exports = __toCommonJS(index_exports);
 var import_react_store = require("@tanstack/react-store");
 var import_algosdk = __toESM(require("algosdk"), 1);
 var React = __toESM(require("react"), 1);
-__reExport(index_exports, require("@txnlab/use-wallet"), module.exports);
+__reExport(index_exports, require("@algorandecosystem/use-wallet"), module.exports);
 var import_jsx_runtime = require("react/jsx-runtime");
 var WalletContext = React.createContext(void 0);
 var WalletProvider = ({ manager, children }) => {
@@ -132,6 +132,7 @@ var useWallet = () => {
         isConnected: !!walletState,
         isActive: wallet.walletKey === activeWalletId,
         canSignData: wallet.canSignData ?? false,
+        canUsePrivateKey: wallet.canUsePrivateKey ?? false,
         connect: (args) => wallet.connect(args),
         disconnect: () => wallet.disconnect(),
         setActive: () => wallet.setActive(),
@@ -169,6 +170,12 @@ var useWallet = () => {
     }
     return activeBaseWallet.signData(data, metadata);
   };
+  const withPrivateKey = (callback) => {
+    if (!activeBaseWallet) {
+      throw new Error("No active wallet");
+    }
+    return activeBaseWallet.withPrivateKey(callback);
+  };
   return {
     wallets,
     isReady,
@@ -180,6 +187,7 @@ var useWallet = () => {
     activeAccount,
     activeAddress,
     signData,
+    withPrivateKey,
     signTransactions,
     transactionSigner
   };
@@ -189,6 +197,6 @@ var useWallet = () => {
   WalletProvider,
   useNetwork,
   useWallet,
-  ...require("@txnlab/use-wallet")
+  ...require("@algorandecosystem/use-wallet")
 });
 //# sourceMappingURL=index.cjs.map

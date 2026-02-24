@@ -4,7 +4,7 @@ import {
   WalletManager,
   WalletProvider,
   type SupportedWallet
-} from '@txnlab/use-wallet-solid'
+} from '@algorandecosystem/use-wallet-solid'
 import { Connect } from './Connect'
 import { NetworkControls } from './NetworkControls'
 import solidLogo from '/solid.svg'
@@ -67,7 +67,7 @@ function App() {
           <img src={solidLogo} class="logo solid" alt="Solid logo" />
         </a>
       </div>
-      <h1>@txnlab/use-wallet-solid</h1>
+      <h1>@algorandecosystem/use-wallet-solid</h1>
       <NetworkControls />
       <Connect />
     </WalletProvider>

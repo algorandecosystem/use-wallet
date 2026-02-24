@@ -2,7 +2,7 @@
 import { useStore } from "@tanstack/react-store";
 import algosdk from "algosdk";
 import * as React from "react";
-export * from "@txnlab/use-wallet";
+export * from "@algorandecosystem/use-wallet";
 import { jsx } from "react/jsx-runtime";
 var WalletContext = React.createContext(void 0);
 var WalletProvider = ({ manager, children }) => {
@@ -95,6 +95,7 @@ var useWallet = () => {
         isConnected: !!walletState,
         isActive: wallet.walletKey === activeWalletId,
         canSignData: wallet.canSignData ?? false,
+        canUsePrivateKey: wallet.canUsePrivateKey ?? false,
         connect: (args) => wallet.connect(args),
         disconnect: () => wallet.disconnect(),
         setActive: () => wallet.setActive(),
@@ -132,6 +133,12 @@ var useWallet = () => {
     }
     return activeBaseWallet.signData(data, metadata);
   };
+  const withPrivateKey = (callback) => {
+    if (!activeBaseWallet) {
+      throw new Error("No active wallet");
+    }
+    return activeBaseWallet.withPrivateKey(callback);
+  };
   return {
     wallets,
     isReady,
@@ -143,6 +150,7 @@ var useWallet = () => {
     activeAccount,
     activeAddress,
     signData,
+    withPrivateKey,
     signTransactions,
     transactionSigner
   };

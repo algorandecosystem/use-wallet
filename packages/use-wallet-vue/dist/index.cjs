@@ -36,10 +36,10 @@ __export(index_exports, {
   useWallet: () => useWallet
 });
 module.exports = __toCommonJS(index_exports);
-__reExport(index_exports, require("@txnlab/use-wallet"), module.exports);
+__reExport(index_exports, require("@algorandecosystem/use-wallet"), module.exports);
 
 // src/walletManagerPlugin.ts
-var import_use_wallet = require("@txnlab/use-wallet");
+var import_use_wallet = require("@algorandecosystem/use-wallet");
 var import_vue = require("vue");
 var WalletManagerPlugin = {
   install(app, options) {
@@ -60,7 +60,7 @@ var WalletManagerPlugin = {
 
 // src/useWallet.ts
 var import_vue_store = require("@tanstack/vue-store");
-var import_use_wallet2 = require("@txnlab/use-wallet");
+var import_use_wallet2 = require("@algorandecosystem/use-wallet");
 var import_algosdk = require("algosdk");
 var import_vue2 = require("vue");
 function useWallet() {
@@ -87,6 +87,7 @@ function useWallet() {
       isConnected: !!walletState,
       isActive: wallet.walletKey === activeWalletId.value,
       canSignData: wallet.canSignData ?? false,
+      canUsePrivateKey: wallet.canUsePrivateKey ?? false,
       connect: (args) => wallet.connect(args),
       disconnect: () => wallet.disconnect(),
       setActive: () => wallet.setActive(),
@@ -137,6 +138,12 @@ function useWallet() {
     }
     return activeBaseWallet.value.signData(data, metadata);
   };
+  const withPrivateKey = (callback) => {
+    if (!activeBaseWallet.value) {
+      throw new Error("No active wallet");
+    }
+    return activeBaseWallet.value.withPrivateKey(callback);
+  };
   return {
     wallets,
     isReady,
@@ -152,6 +159,7 @@ function useWallet() {
     activeAccount,
     activeAddress,
     signData,
+    withPrivateKey,
     signTransactions,
     transactionSigner
   };
@@ -159,7 +167,7 @@ function useWallet() {
 
 // src/useNetwork.ts
 var import_vue_store2 = require("@tanstack/vue-store");
-var import_use_wallet3 = require("@txnlab/use-wallet");
+var import_use_wallet3 = require("@algorandecosystem/use-wallet");
 var import_algosdk2 = __toESM(require("algosdk"), 1);
 var import_vue3 = require("vue");
 function useNetwork() {
@@ -231,6 +239,6 @@ function useNetwork() {
   WalletManagerPlugin,
   useNetwork,
   useWallet,
-  ...require("@txnlab/use-wallet")
+  ...require("@algorandecosystem/use-wallet")
 });
 //# sourceMappingURL=index.cjs.map

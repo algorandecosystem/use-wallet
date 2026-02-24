@@ -5939,6 +5939,11 @@ var BaseWallet = class {
     this.logger.error("Method not supported: signData");
     throw new Error("Method not supported: signData");
   };
+  canUsePrivateKey = false;
+  withPrivateKey = async (_callback) => {
+    this.logger.error("Method not supported: withPrivateKey");
+    throw new Error("Method not supported: withPrivateKey");
+  };
   // ---------- Derived Properties ------------------------------------ //
   get name() {
     return this.id.toUpperCase();
@@ -7878,7 +7883,9 @@ var LiquidWallet = class extends BaseWallet {
   disconnect = async () => {
     this.logger.info("Disconnecting...");
     if (!this.authClient) {
-      throw new Error("No auth client to disconnect");
+      this.logger.info("No auth client to disconnect, cleaning up state...");
+      this.onDisconnect();
+      return;
     }
     await this.authClient.disconnect();
     this.onDisconnect();
@@ -8305,6 +8312,116 @@ var MagicAuth = class extends BaseWallet {
 
 // src/wallets/mnemonic.ts
 import algosdk9 from "algosdk";
+
+// src/secure-key.ts
+var secureLogger = logger.createScopedLogger("SecureKey");
+function zeroMemory(buffer) {
+  if (!buffer || buffer.length === 0) return;
+  try {
+    if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+      crypto.getRandomValues(buffer);
+    }
+    buffer.fill(0);
+  } catch {
+    for (let i = 0; i < buffer.length; i++) {
+      buffer[i] = 0;
+    }
+  }
+}
+function zeroString(str) {
+  if (!str) return "";
+  const arr = new Uint8Array(str.length);
+  for (let i = 0; i < str.length; i++) {
+    arr[i] = str.charCodeAt(i);
+  }
+  zeroMemory(arr);
+  return "";
+}
+var SecureKeyContainer = class {
+  _secretKey = null;
+  _isCleared = false;
+  constructor(secretKey) {
+    this._secretKey = new Uint8Array(secretKey);
+  }
+  /**
+   * Check if the key has been cleared
+   */
+  get isCleared() {
+    return this._isCleared;
+  }
+  /**
+   * Execute a callback with access to the secret key.
+   * The key is automatically cleared if an error occurs.
+   */
+  async useKey(callback) {
+    if (this._isCleared || !this._secretKey) {
+      throw new Error("SecureKeyContainer: Key has been cleared");
+    }
+    try {
+      return await callback(this._secretKey);
+    } catch (error) {
+      this.clear();
+      throw error;
+    }
+  }
+  /**
+   * Execute a synchronous callback with access to the secret key.
+   */
+  useKeySync(callback) {
+    if (this._isCleared || !this._secretKey) {
+      throw new Error("SecureKeyContainer: Key has been cleared");
+    }
+    try {
+      return callback(this._secretKey);
+    } catch (error) {
+      this.clear();
+      throw error;
+    }
+  }
+  /**
+   * Securely clear the key from memory.
+   * This should be called when the key is no longer needed.
+   */
+  clear() {
+    if (this._secretKey && !this._isCleared) {
+      zeroMemory(this._secretKey);
+      this._secretKey = null;
+      this._isCleared = true;
+      secureLogger.debug("Key material cleared from memory");
+    }
+  }
+};
+async function withSecureKey(secretKey, callback) {
+  const container = new SecureKeyContainer(secretKey);
+  try {
+    return await callback(container);
+  } finally {
+    container.clear();
+  }
+}
+function withSecureKeySync(secretKey, callback) {
+  const container = new SecureKeyContainer(secretKey);
+  try {
+    return callback(container);
+  } finally {
+    container.clear();
+  }
+}
+async function deriveAlgorandAccountFromEd25519(ed25519Seed) {
+  if (ed25519Seed.length !== 32) {
+    throw new Error(`Invalid ed25519 seed length: expected 32 bytes, got ${ed25519Seed.length}`);
+  }
+  const nacl = await Promise.resolve().then(() => __toESM(require_nacl_fast(), 1));
+  const algosdk15 = await import("algosdk");
+  const keyPair = nacl.sign.keyPair.fromSeed(ed25519Seed);
+  const address = algosdk15.encodeAddress(keyPair.publicKey);
+  return {
+    addr: address,
+    sk: keyPair.secretKey
+  };
+}
+
+// src/wallets/mnemonic.ts
 var LOCAL_STORAGE_MNEMONIC_KEY = `${LOCAL_STORAGE_KEY}_mnemonic`;
 var ICON12 = `data:image/svg+xml;base64,${btoa(`
 <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
@@ -8458,6 +8575,41 @@ var MnemonicWallet = class extends BaseWallet {
     });
     return txnsToSign;
   }
+  canUsePrivateKey = true;
+  /**
+   * Provide scoped access to the private key via a callback.
+   *
+   * The callback receives a copy of the 64-byte Algorand secret key.
+   * The copy is guaranteed to be zeroed from memory when the callback
+   * completes, whether it succeeds or throws.
+   *
+   * **Note:** This method is blocked on MainNet. The Mnemonic wallet is intended
+   * for development and testing only. For production use, see Web3Auth which
+   * supports `withPrivateKey` on all networks.
+   *
+   * @example
+   * ```typescript
+   * const result = await wallet.withPrivateKey(async (secretKey) => {
+   *   // secretKey is a 64-byte Uint8Array
+   *   return doSomethingWith(secretKey)
+   * })
+   * // secretKey is zeroed at this point
+   * ```
+   */
+  withPrivateKey = async (callback) => {
+    this.checkMainnet();
+    if (!this.account) {
+      this.logger.error("Mnemonic wallet not connected");
+      throw new Error("Mnemonic wallet not connected");
+    }
+    this.logger.debug("withPrivateKey: Providing private key access...");
+    const skCopy = new Uint8Array(this.account.sk);
+    try {
+      return await callback(skCopy);
+    } finally {
+      zeroMemory(skCopy);
+    }
+  };
   signTransactions = async (txnGroup, indexesToSign) => {
     this.checkMainnet();
     try {
@@ -8697,116 +8849,6 @@ var PeraWallet = class extends BaseWallet {
 
 // src/wallets/web3auth.ts
 import algosdk11 from "algosdk";
-
-// src/secure-key.ts
-var secureLogger = logger.createScopedLogger("SecureKey");
-function zeroMemory(buffer) {
-  if (!buffer || buffer.length === 0) return;
-  try {
-    if (typeof crypto !== "undefined" && crypto.getRandomValues) {
-      crypto.getRandomValues(buffer);
-    }
-    buffer.fill(0);
-  } catch {
-    for (let i = 0; i < buffer.length; i++) {
-      buffer[i] = 0;
-    }
-  }
-}
-function zeroString(str) {
-  if (!str) return "";
-  const arr = new Uint8Array(str.length);
-  for (let i = 0; i < str.length; i++) {
-    arr[i] = str.charCodeAt(i);
-  }
-  zeroMemory(arr);
-  return "";
-}
-var SecureKeyContainer = class {
-  _secretKey = null;
-  _isCleared = false;
-  constructor(secretKey) {
-    this._secretKey = new Uint8Array(secretKey);
-  }
-  /**
-   * Check if the key has been cleared
-   */
-  get isCleared() {
-    return this._isCleared;
-  }
-  /**
-   * Execute a callback with access to the secret key.
-   * The key is automatically cleared if an error occurs.
-   */
-  async useKey(callback) {
-    if (this._isCleared || !this._secretKey) {
-      throw new Error("SecureKeyContainer: Key has been cleared");
-    }
-    try {
-      return await callback(this._secretKey);
-    } catch (error) {
-      this.clear();
-      throw error;
-    }
-  }
-  /**
-   * Execute a synchronous callback with access to the secret key.
-   */
-  useKeySync(callback) {
-    if (this._isCleared || !this._secretKey) {
-      throw new Error("SecureKeyContainer: Key has been cleared");
-    }
-    try {
-      return callback(this._secretKey);
-    } catch (error) {
-      this.clear();
-      throw error;
-    }
-  }
-  /**
-   * Securely clear the key from memory.
-   * This should be called when the key is no longer needed.
-   */
-  clear() {
-    if (this._secretKey && !this._isCleared) {
-      zeroMemory(this._secretKey);
-      this._secretKey = null;
-      this._isCleared = true;
-      secureLogger.debug("Key material cleared from memory");
-    }
-  }
-};
-async function withSecureKey(secretKey, callback) {
-  const container = new SecureKeyContainer(secretKey);
-  try {
-    return await callback(container);
-  } finally {
-    container.clear();
-  }
-}
-function withSecureKeySync(secretKey, callback) {
-  const container = new SecureKeyContainer(secretKey);
-  try {
-    return callback(container);
-  } finally {
-    container.clear();
-  }
-}
-async function deriveAlgorandAccountFromEd25519(ed25519Seed) {
-  if (ed25519Seed.length !== 32) {
-    throw new Error(`Invalid ed25519 seed length: expected 32 bytes, got ${ed25519Seed.length}`);
-  }
-  const nacl = await Promise.resolve().then(() => __toESM(require_nacl_fast(), 1));
-  const algosdk15 = await import("algosdk");
-  const keyPair = nacl.sign.keyPair.fromSeed(ed25519Seed);
-  const address = algosdk15.encodeAddress(keyPair.publicKey);
-  return {
-    addr: address,
-    sk: keyPair.secretKey
-  };
-}
-
-// src/wallets/web3auth.ts
 var LOCAL_STORAGE_WEB3AUTH_KEY = `${LOCAL_STORAGE_KEY}:web3auth`;
 var ICON14 = `data:image/svg+xml;base64,${btoa(`
 <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
@@ -9322,6 +9364,45 @@ var Web3AuthWallet = class extends BaseWallet {
     });
     return txnsToSign;
   }
+  canUsePrivateKey = true;
+  /**
+   * Provide scoped access to the private key via a callback.
+   *
+   * The callback receives a 64-byte Algorand secret key (ed25519 seed + public key).
+   * The key is a fresh copy that is guaranteed to be zeroed from memory when the
+   * callback completes, whether it succeeds or throws.
+   *
+   * SECURITY: The key is fetched fresh from Web3Auth for each call and never cached.
+   *
+   * @example
+   * ```typescript
+   * const result = await wallet.withPrivateKey(async (secretKey) => {
+   *   // secretKey is a 64-byte Uint8Array
+   *   // Use for custom signing, authentication, etc.
+   *   return doSomethingWith(secretKey)
+   * })
+   * // secretKey is zeroed at this point
+   * ```
+   */
+  withPrivateKey = async (callback) => {
+    this.logger.debug("withPrivateKey: Providing private key access...");
+    await this.ensureConnected();
+    const keyContainer = await this.getSecureKey();
+    try {
+      return await keyContainer.useKey(async (secretKey) => {
+        const account = await deriveAlgorandAccountFromEd25519(secretKey);
+        const skCopy = new Uint8Array(account.sk);
+        zeroMemory(account.sk);
+        try {
+          return await callback(skCopy);
+        } finally {
+          zeroMemory(skCopy);
+        }
+      });
+    } finally {
+      keyContainer.clear();
+    }
+  };
   /**
    * Sign transactions
    *

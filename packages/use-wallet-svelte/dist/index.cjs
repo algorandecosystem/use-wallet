@@ -40,7 +40,7 @@ module.exports = __toCommonJS(index_exports);
 var import_svelte_store = require("@tanstack/svelte-store");
 var import_algosdk = __toESM(require("algosdk"), 1);
 var import_svelte = require("svelte");
-__reExport(index_exports, require("@txnlab/use-wallet"), module.exports);
+__reExport(index_exports, require("@algorandecosystem/use-wallet"), module.exports);
 var useWalletContext = (manager) => {
   (0, import_svelte.setContext)("walletManager", manager);
   manager.resumeSessions().catch((error) => {
@@ -127,6 +127,7 @@ var useWallet = () => {
       isConnected: () => !!walletStore.current[wallet.walletKey],
       isActive: () => wallet.walletKey === activeWalletId.current,
       canSignData: wallet.canSignData ?? false,
+      canUsePrivateKey: wallet.canUsePrivateKey ?? false,
       connect: (args) => wallet.connect(args),
       disconnect: () => wallet.disconnect(),
       setActive: () => wallet.setActive(),
@@ -176,6 +177,13 @@ var useWallet = () => {
     }
     return wallet.signData(data, metadata);
   };
+  const withPrivateKey = (callback) => {
+    const wallet = manager.wallets.find((w) => w.walletKey === activeWalletId.current);
+    if (!wallet) {
+      throw new Error("No active wallet");
+    }
+    return wallet.withPrivateKey(callback);
+  };
   return {
     wallets,
     isReady,
@@ -186,6 +194,7 @@ var useWallet = () => {
     activeAccount,
     activeAddress,
     signData,
+    withPrivateKey,
     signTransactions,
     transactionSigner
   };
@@ -196,6 +205,6 @@ var useWallet = () => {
   useWallet,
   useWalletContext,
   useWalletManager,
-  ...require("@txnlab/use-wallet")
+  ...require("@algorandecosystem/use-wallet")
 });
 //# sourceMappingURL=index.cjs.map

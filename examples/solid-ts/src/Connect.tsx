@@ -6,7 +6,7 @@ import {
   useWallet,
   WalletId,
   type BaseWallet
-} from '@txnlab/use-wallet-solid'
+} from '@algorandecosystem/use-wallet-solid'
 import algosdk from 'algosdk'
 import { canonify } from 'canonify'
 import { For, Show, createSignal } from 'solid-js'

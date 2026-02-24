@@ -1,4 +1,4 @@
-import { NetworkId, WalletManager } from '@txnlab/use-wallet'
+import { NetworkId, WalletManager } from '@algorandecosystem/use-wallet'
 
 export class ActiveNetwork {
   manager: WalletManager

@@ -1,8 +1,8 @@
 // src/index.ts
-export * from "@txnlab/use-wallet";
+export * from "@algorandecosystem/use-wallet";
 
 // src/walletManagerPlugin.ts
-import { WalletManager } from "@txnlab/use-wallet";
+import { WalletManager } from "@algorandecosystem/use-wallet";
 import { ref } from "vue";
 var WalletManagerPlugin = {
   install(app, options) {
@@ -23,7 +23,7 @@ var WalletManagerPlugin = {
 
 // src/useWallet.ts
 import { useStore } from "@tanstack/vue-store";
-import "@txnlab/use-wallet";
+import "@algorandecosystem/use-wallet";
 import "algosdk";
 import { computed, inject } from "vue";
 function useWallet() {
@@ -50,6 +50,7 @@ function useWallet() {
       isConnected: !!walletState,
       isActive: wallet.walletKey === activeWalletId.value,
       canSignData: wallet.canSignData ?? false,
+      canUsePrivateKey: wallet.canUsePrivateKey ?? false,
       connect: (args) => wallet.connect(args),
       disconnect: () => wallet.disconnect(),
       setActive: () => wallet.setActive(),
@@ -100,6 +101,12 @@ function useWallet() {
     }
     return activeBaseWallet.value.signData(data, metadata);
   };
+  const withPrivateKey = (callback) => {
+    if (!activeBaseWallet.value) {
+      throw new Error("No active wallet");
+    }
+    return activeBaseWallet.value.withPrivateKey(callback);
+  };
   return {
     wallets,
     isReady,
@@ -115,6 +122,7 @@ function useWallet() {
     activeAccount,
     activeAddress,
     signData,
+    withPrivateKey,
     signTransactions,
     transactionSigner
   };
@@ -122,7 +130,7 @@ function useWallet() {
 
 // src/useNetwork.ts
 import { useStore as useStore2 } from "@tanstack/vue-store";
-import "@txnlab/use-wallet";
+import "@algorandecosystem/use-wallet";
 import algosdk2 from "algosdk";
 import { computed as computed2, inject as inject2 } from "vue";
 function useNetwork() {

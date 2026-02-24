@@ -1,6 +1,6 @@
-import * as _txnlab_use_wallet from '@txnlab/use-wallet';
-import { WalletManager, NetworkId, AlgodConfig, WalletId, WalletKey, WalletMetadata, WalletAccount, SignMetadata, SignDataResponse } from '@txnlab/use-wallet';
-export * from '@txnlab/use-wallet';
+import * as _algorandecosystem_use_wallet from '@algorandecosystem/use-wallet';
+import { WalletId, WalletKey, WalletMetadata, WalletAccount, WalletManager, NetworkId, AlgodConfig, SignMetadata, SignDataResponse } from '@algorandecosystem/use-wallet';
+export * from '@algorandecosystem/use-wallet';
 import algosdk from 'algosdk';
 import * as React from 'react';
 
@@ -11,8 +11,8 @@ interface WalletProviderProps {
 declare const WalletProvider: ({ manager, children }: WalletProviderProps) => JSX.Element;
 declare const useNetwork: () => {
     activeNetwork: string;
-    networkConfig: Record<string, _txnlab_use_wallet.NetworkConfig>;
-    activeNetworkConfig: _txnlab_use_wallet.NetworkConfig;
+    networkConfig: Record<string, _algorandecosystem_use_wallet.NetworkConfig>;
+    activeNetworkConfig: _algorandecosystem_use_wallet.NetworkConfig;
     setActiveNetwork: (networkId: NetworkId | string) => Promise<void>;
     updateAlgodConfig: (networkId: string, config: Partial<AlgodConfig>) => void;
     resetNetworkConfig: (networkId: string) => void;
@@ -27,6 +27,7 @@ interface Wallet {
     isConnected: boolean;
     isActive: boolean;
     canSignData: boolean;
+    canUsePrivateKey: boolean;
     connect: (args?: Record<string, any>) => Promise<WalletAccount[]>;
     disconnect: () => Promise<void>;
     setActive: () => void;
@@ -43,6 +44,7 @@ declare const useWallet: () => {
     activeAccount: WalletAccount | null;
     activeAddress: string | null;
     signData: (data: string, metadata: SignMetadata) => Promise<SignDataResponse>;
+    withPrivateKey: <T>(callback: (secretKey: Uint8Array) => Promise<T>) => Promise<T>;
     signTransactions: <T extends algosdk.Transaction[] | Uint8Array[]>(txnGroup: T | T[], indexesToSign?: number[]) => Promise<(Uint8Array | null)[]>;
     transactionSigner: (txnGroup: algosdk.Transaction[], indexesToSign: number[]) => Promise<Uint8Array[]>;
 };

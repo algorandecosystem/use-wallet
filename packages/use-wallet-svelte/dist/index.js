@@ -2,7 +2,7 @@
 import { useStore } from "@tanstack/svelte-store";
 import algosdk from "algosdk";
 import { getContext, setContext } from "svelte";
-export * from "@txnlab/use-wallet";
+export * from "@algorandecosystem/use-wallet";
 var useWalletContext = (manager) => {
   setContext("walletManager", manager);
   manager.resumeSessions().catch((error) => {
@@ -89,6 +89,7 @@ var useWallet = () => {
       isConnected: () => !!walletStore.current[wallet.walletKey],
       isActive: () => wallet.walletKey === activeWalletId.current,
       canSignData: wallet.canSignData ?? false,
+      canUsePrivateKey: wallet.canUsePrivateKey ?? false,
       connect: (args) => wallet.connect(args),
       disconnect: () => wallet.disconnect(),
       setActive: () => wallet.setActive(),
@@ -138,6 +139,13 @@ var useWallet = () => {
     }
     return wallet.signData(data, metadata);
   };
+  const withPrivateKey = (callback) => {
+    const wallet = manager.wallets.find((w) => w.walletKey === activeWalletId.current);
+    if (!wallet) {
+      throw new Error("No active wallet");
+    }
+    return wallet.withPrivateKey(callback);
+  };
   return {
     wallets,
     isReady,
@@ -148,6 +156,7 @@ var useWallet = () => {
     activeAccount,
     activeAddress,
     signData,
+    withPrivateKey,
     signTransactions,
     transactionSigner
   };

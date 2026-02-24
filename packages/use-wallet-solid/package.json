@@ -1,5 +1,5 @@
 {
-  "name": "@txnlab/use-wallet-solid",
+  "name": "@algorandecosystem/use-wallet-solid",
   "version": "4.6.0",
   "description": "Solid.js library for integrating Algorand wallets into decentralized applications",
   "author": "Doug Richar <drichar@gmail.com>",
@@ -62,7 +62,7 @@
   ],
   "dependencies": {
     "@tanstack/solid-store": "0.8.0",
-    "@txnlab/use-wallet": "workspace:*"
+    "@algorandecosystem/use-wallet": "workspace:*"
   },
   "devDependencies": {
     "@solidjs/testing-library": "0.8.10",

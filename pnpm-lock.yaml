@@ -74,6 +74,9 @@ importers:
 
   examples/nextjs:
     dependencies:
+      '@algorandecosystem/use-wallet-react':
+        specifier: workspace:*
+        version: link:../../packages/use-wallet-react
       '@blockshake/defly-connect':
         specifier: ^1.2.1
         version: 1.2.1(algosdk@3.5.2)
@@ -83,9 +86,6 @@ importers:
       '@perawallet/connect':
         specifier: ^1.4.1
         version: 1.4.1(algosdk@3.5.2)
-      '@txnlab/use-wallet-react':
-        specifier: workspace:*
-        version: link:../../packages/use-wallet-react
       '@walletconnect/modal':
         specifier: ^2.7.0
         version: 2.7.0(@types/react@18.3.27)(react@18.3.1)
@@ -150,6 +150,12 @@ importers:
       '@algorandecosystem/liquid-auth-use-wallet-client':
         specifier: 1.5.0
         version: 1.5.0
+      '@algorandecosystem/use-wallet':
+        specifier: workspace:*
+        version: link:../../packages/use-wallet
+      '@algorandecosystem/use-wallet-vue':
+        specifier: workspace:*
+        version: link:../../packages/use-wallet-vue
       '@blockshake/defly-connect':
         specifier: ^1.2.1
         version: 1.2.1(algosdk@3.5.2)
@@ -159,12 +165,6 @@ importers:
       '@perawallet/connect':
         specifier: ^1.4.1
         version: 1.4.1(algosdk@3.5.2)
-      '@txnlab/use-wallet':
-        specifier: workspace:*
-        version: link:../../packages/use-wallet
-      '@txnlab/use-wallet-vue':
-        specifier: workspace:*
-        version: link:../../packages/use-wallet-vue
       '@walletconnect/modal':
         specifier: ^2.7.0
         version: 2.7.0(@types/react@18.3.27)(react@18.3.1)
@@ -226,6 +226,9 @@ importers:
       '@algorandecosystem/liquid-auth-use-wallet-client':
         specifier: 1.5.0
         version: 1.5.0
+      '@algorandecosystem/use-wallet-react':
+        specifier: workspace:*
+        version: link:../../packages/use-wallet-react
       '@blockshake/defly-connect':
         specifier: ^1.2.1
         version: 1.2.1(algosdk@3.5.2)
@@ -235,9 +238,6 @@ importers:
       '@perawallet/connect':
         specifier: ^1.4.1
         version: 1.4.1(algosdk@3.5.2)
-      '@txnlab/use-wallet-react':
-        specifier: workspace:*
-        version: link:../../packages/use-wallet-react
       '@walletconnect/modal':
         specifier: ^2.7.0
         version: 2.7.0(@types/react@18.3.27)(react@18.3.1)
@@ -311,6 +311,9 @@ importers:
       '@algorandecosystem/liquid-auth-use-wallet-client':
         specifier: 1.5.0
         version: 1.5.0
+      '@algorandecosystem/use-wallet-solid':
+        specifier: workspace:*
+        version: link:../../packages/use-wallet-solid
       '@blockshake/defly-connect':
         specifier: ^1.2.1
         version: 1.2.1(algosdk@3.5.2)
@@ -320,9 +323,6 @@ importers:
       '@perawallet/connect':
         specifier: ^1.4.1
         version: 1.4.1(algosdk@3.5.2)
-      '@txnlab/use-wallet-solid':
-        specifier: workspace:*
-        version: link:../../packages/use-wallet-solid
       '@walletconnect/modal':
         specifier: ^2.7.0
         version: 2.7.0(@types/react@18.3.27)(react@18.3.1)
@@ -372,6 +372,9 @@ importers:
 
   examples/svelte-ts:
     dependencies:
+      '@algorandecosystem/use-wallet-svelte':
+        specifier: workspace:*
+        version: link:../../packages/use-wallet-svelte
       '@blockshake/defly-connect':
         specifier: ^1.2.1
         version: 1.2.1(algosdk@3.5.2)
@@ -381,9 +384,6 @@ importers:
       '@perawallet/connect':
         specifier: ^1.4.1
         version: 1.4.1(algosdk@3.5.2)
-      '@txnlab/use-wallet-svelte':
-        specifier: workspace:*
-        version: link:../../packages/use-wallet-svelte
       '@walletconnect/modal':
         specifier: ^2.7.0
         version: 2.7.0(@types/react@18.3.27)(react@18.3.1)
@@ -445,6 +445,9 @@ importers:
       '@algorandecosystem/liquid-auth-use-wallet-client':
         specifier: 1.5.0
         version: 1.5.0
+      '@algorandecosystem/use-wallet':
+        specifier: workspace:*
+        version: link:../../packages/use-wallet
       '@blockshake/defly-connect':
         specifier: ^1.2.1
         version: 1.2.1(algosdk@3.5.2)
@@ -454,9 +457,6 @@ importers:
       '@perawallet/connect':
         specifier: ^1.4.1
         version: 1.4.1(algosdk@3.5.2)
-      '@txnlab/use-wallet':
-        specifier: workspace:*
-        version: link:../../packages/use-wallet
       '@walletconnect/modal':
         specifier: ^2.7.0
         version: 2.7.0(@types/react@18.3.27)(react@18.3.1)
@@ -506,6 +506,9 @@ importers:
       '@algorandecosystem/liquid-auth-use-wallet-client':
         specifier: 1.5.0
         version: 1.5.0
+      '@algorandecosystem/use-wallet-vue':
+        specifier: workspace:*
+        version: link:../../packages/use-wallet-vue
       '@blockshake/defly-connect':
         specifier: ^1.2.1
         version: 1.2.1(algosdk@3.5.2)
@@ -515,9 +518,6 @@ importers:
       '@perawallet/connect':
         specifier: ^1.4.1
         version: 1.4.1(algosdk@3.5.2)
-      '@txnlab/use-wallet-vue':
-        specifier: workspace:*
-        version: link:../../packages/use-wallet-vue
       '@walletconnect/modal':
         specifier: ^2.7.0
         version: 2.7.0(@types/react@18.3.27)(react@18.3.1)
@@ -643,6 +643,9 @@ importers:
 
   packages/use-wallet-react:
     dependencies:
+      '@algorandecosystem/use-wallet':
+        specifier: workspace:*
+        version: link:../use-wallet
       '@blockshake/defly-connect':
         specifier: ^1.2.1
         version: 1.2.1(algosdk@3.5.2)
@@ -655,9 +658,6 @@ importers:
       '@tanstack/react-store':
         specifier: 0.8.0
         version: 0.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@txnlab/use-wallet':
-        specifier: workspace:*
-        version: link:../use-wallet
       '@walletconnect/modal':
         specifier: ^2.7.0
         version: 2.7.0(@types/react@18.3.27)(react@18.3.1)
@@ -695,6 +695,9 @@ importers:
 
   packages/use-wallet-solid:
     dependencies:
+      '@algorandecosystem/use-wallet':
+        specifier: workspace:*
+        version: link:../use-wallet
       '@blockshake/defly-connect':
         specifier: ^1.2.1
         version: 1.2.1(algosdk@3.5.2)
@@ -707,9 +710,6 @@ importers:
       '@tanstack/solid-store':
         specifier: 0.8.0
         version: 0.8.0(solid-js@1.9.11)
-      '@txnlab/use-wallet':
-        specifier: workspace:*
-        version: link:../use-wallet
       '@walletconnect/modal':
         specifier: ^2.7.0
         version: 2.7.0(@types/react@18.3.27)(react@18.3.1)
@@ -744,6 +744,9 @@ importers:
 
   packages/use-wallet-svelte:
     dependencies:
+      '@algorandecosystem/use-wallet':
+        specifier: workspace:*
+        version: link:../use-wallet
       '@blockshake/defly-connect':
         specifier: ^1.2.1
         version: 1.2.1(algosdk@3.5.2)
@@ -756,9 +759,6 @@ importers:
       '@tanstack/svelte-store':
         specifier: 0.9.0
         version: 0.9.0(svelte@5.49.1)
-      '@txnlab/use-wallet':
-        specifier: workspace:*
-        version: link:../use-wallet
       '@walletconnect/modal':
         specifier: ^2.7.0
         version: 2.7.0(@types/react@18.3.27)(react@18.3.1)
@@ -790,6 +790,9 @@ importers:
 
   packages/use-wallet-vue:
     dependencies:
+      '@algorandecosystem/use-wallet':
+        specifier: workspace:*
+        version: link:../use-wallet
       '@blockshake/defly-connect':
         specifier: ^1.2.1
         version: 1.2.1(algosdk@3.5.2)
@@ -802,9 +805,6 @@ importers:
       '@tanstack/vue-store':
         specifier: 0.8.0
         version: 0.8.0(vue@3.5.27(typescript@5.9.3))
-      '@txnlab/use-wallet':
-        specifier: workspace:*
-        version: link:../use-wallet
       '@walletconnect/modal':
         specifier: ^2.7.0
         version: 2.7.0(@types/react@18.3.27)(react@18.3.1)

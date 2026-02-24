@@ -6,7 +6,7 @@ import {
   WalletManager,
   WalletProvider,
   type SupportedWallet
-} from '@txnlab/use-wallet-react'
+} from '@algorandecosystem/use-wallet-react'
 
 const wallets: SupportedWallet[] = [
   WalletId.DEFLY,

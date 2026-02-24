@@ -4,7 +4,7 @@ import {
   WalletManager,
   WalletProvider,
   type SupportedWallet
-} from '@txnlab/use-wallet-react'
+} from '@algorandecosystem/use-wallet-react'
 import { Connect } from './Connect'
 import { NetworkControls } from './NetworkControls'
 import reactLogo from '/react.svg'
@@ -77,7 +77,7 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>@txnlab/use-wallet-react</h1>
+      <h1>@algorandecosystem/use-wallet-react</h1>
       <NetworkControls />
       <Connect />
     </WalletProvider>
