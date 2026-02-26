@@ -1,8 +1,8 @@
 import { useStore } from '@tanstack/solid-store';
 import algosdk from 'algosdk';
-export * from '@txnlab/use-wallet';
+export * from '@algorandecosystem/use-wallet';
 
-// ../../node_modules/.pnpm/solid-js@1.9.10/node_modules/solid-js/dist/solid.js
+// ../../node_modules/.pnpm/solid-js@1.9.11/node_modules/solid-js/dist/solid.js
 var sharedConfig = {
   context: void 0,
   registry: void 0,
@@ -584,7 +584,7 @@ function createComponent(Comp, props) {
   return untrack(() => Comp(props || {}));
 }
 
-// ../../node_modules/.pnpm/solid-js@1.9.10/node_modules/solid-js/web/dist/web.js
+// ../../node_modules/.pnpm/solid-js@1.9.11/node_modules/solid-js/web/dist/web.js
 var booleans = [
   "allowfullscreen",
   "async",
@@ -796,6 +796,13 @@ var useWallet = () => {
     }
     return wallet.signData(data, metadata);
   };
+  const withPrivateKey = (callback) => {
+    const wallet = activeWallet();
+    if (!wallet) {
+      throw new Error("No active wallet");
+    }
+    return wallet.withPrivateKey(callback);
+  };
   return {
     wallets: manager().wallets,
     isReady,
@@ -810,6 +817,7 @@ var useWallet = () => {
     isWalletActive,
     isWalletConnected,
     signData,
+    withPrivateKey,
     signTransactions,
     transactionSigner,
     walletStore

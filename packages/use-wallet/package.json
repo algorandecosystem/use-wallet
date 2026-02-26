@@ -1,6 +1,6 @@
 {
   "name": "@algorandecosystem/use-wallet",
-  "version": "4.7.0-beta.0",
+  "version": "4.7.0-beta.1",
   "description": "TypeScript library for integrating Algorand wallets into decentralized applications",
   "author": "Algorand Ecosystem <contact@algorand.eco>",
   "license": "MIT",
@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@agoralabs-sh/avm-web-provider": "1.7.0",
-    "@algorandecosystem/liquid-auth-use-wallet-client": "1.5.0",
+    "@algorandecosystem/liquid-auth-use-wallet-client": "1.5.1",
     "@blockshake/defly-connect": "1.2.1",
     "@magic-ext/algorand": "24.4.2",
     "@magic-sdk/provider": "29.5.0",

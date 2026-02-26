@@ -2,13 +2,13 @@
 
 var solidStore = require('@tanstack/solid-store');
 var algosdk = require('algosdk');
-var useWallet = require('@txnlab/use-wallet');
+var useWallet = require('@algorandecosystem/use-wallet');
 
 function _interopDefault (e) { return e && e.__esModule ? e : { default: e }; }
 
 var algosdk__default = /*#__PURE__*/_interopDefault(algosdk);
 
-// ../../node_modules/.pnpm/solid-js@1.9.10/node_modules/solid-js/dist/solid.js
+// ../../node_modules/.pnpm/solid-js@1.9.11/node_modules/solid-js/dist/solid.js
 var sharedConfig = {
   context: void 0,
   registry: void 0,
@@ -590,7 +590,7 @@ function createComponent(Comp, props) {
   return untrack(() => Comp(props || {}));
 }
 
-// ../../node_modules/.pnpm/solid-js@1.9.10/node_modules/solid-js/web/dist/web.js
+// ../../node_modules/.pnpm/solid-js@1.9.11/node_modules/solid-js/web/dist/web.js
 var booleans = [
   "allowfullscreen",
   "async",
@@ -802,6 +802,13 @@ exports.useWallet = () => {
     }
     return wallet.signData(data, metadata);
   };
+  const withPrivateKey = (callback) => {
+    const wallet = activeWallet();
+    if (!wallet) {
+      throw new Error("No active wallet");
+    }
+    return wallet.withPrivateKey(callback);
+  };
   return {
     wallets: manager().wallets,
     isReady,
@@ -816,6 +823,7 @@ exports.useWallet = () => {
     isWalletActive,
     isWalletConnected,
     signData,
+    withPrivateKey,
     signTransactions,
     transactionSigner,
     walletStore

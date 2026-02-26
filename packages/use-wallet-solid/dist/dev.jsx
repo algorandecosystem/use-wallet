@@ -2,7 +2,7 @@
 import { useStore } from "@tanstack/solid-store";
 import algosdk from "algosdk";
 
-// ../../node_modules/.pnpm/solid-js@1.9.10/node_modules/solid-js/dist/solid.js
+// ../../node_modules/.pnpm/solid-js@1.9.11/node_modules/solid-js/dist/solid.js
 var sharedConfig = {
   context: void 0,
   registry: void 0,
@@ -569,7 +569,7 @@ function createProvider(id, options) {
 }
 
 // src/index.tsx
-export * from "@txnlab/use-wallet";
+export * from "@algorandecosystem/use-wallet";
 var WalletContext = createContext();
 var WalletProvider = (props) => {
   const store = () => props.manager;
@@ -687,6 +687,13 @@ var useWallet = () => {
     }
     return wallet.signData(data, metadata);
   };
+  const withPrivateKey = (callback) => {
+    const wallet = activeWallet();
+    if (!wallet) {
+      throw new Error("No active wallet");
+    }
+    return wallet.withPrivateKey(callback);
+  };
   return {
     wallets: manager().wallets,
     isReady,
@@ -701,6 +708,7 @@ var useWallet = () => {
     isWalletActive,
     isWalletConnected,
     signData,
+    withPrivateKey,
     signTransactions,
     transactionSigner,
     walletStore
